@@ -4,8 +4,8 @@ This repository contains exercises and assignments for GEOG 592.
 
 ## Student information
 
-Name:
+Name: Maren Kloempken
 
-ONYEN:
+ONYEN: marenk
 
-GitHub username:
+GitHub username: MarenKloempken
