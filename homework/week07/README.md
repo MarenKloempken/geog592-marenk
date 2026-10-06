@@ -43,15 +43,17 @@ Primary use:
 - Creating road buffers
 - Measuring the proportion of each park located within 1 mile of a road
 
-## U.S. Outline
+## U.S Boundaries
 
-### `gz_2010_us_outline_500k.json`
+### `us_boundaries.geojson`
 
 Source: GeoJSON and KML data for the United States
 https://eric.clst.org/tech/usgeojson/
 
 This GeoJSON dataset contains a generalized outline of the United States.
-It may be used as a background layer for national-scale maps.
+It may be used as a background layer for national-scale maps.It was originally
+downloaded as a json file, but as I do not know how to use geopandas with json files,
+I simply exported it as a Geojson through QGIS. 
 
 Primary use:
 - Map background/context
