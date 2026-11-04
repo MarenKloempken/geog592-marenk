@@ -1,48 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# 
-
-# <div style="
-#     background-color: #7BAFD4;
-#     border-radius: 18px;
-#     padding: 22px 26px;
-#     display: flex;
-#     align-items: center;
-#     gap: 24px;
-#     margin-bottom: 18px;
-# ">
-#     <img src="592_avatar_lr.png" alt="GEOG 592"
-#         style="width:110px;height:110px;border-radius:22px;">
-#     <div>
-#         <div style="
-#             font-family: Impact, 'Arial Black', Arial, sans-serif;
-#             font-size: 42px;
-#             font-weight: 900;
-#             letter-spacing: 2px;
-#             line-height: 1;
-#             color: white;
-#         ">GEOG 592</div>
-#         <div style="
-#             font-family: Arial, Helvetica, sans-serif;
-#             font-size: 22px;
-#             font-weight: 700;
-#             color: #13294B;
-#             margin-top: 8px;
-#         ">GIS Programming</div>
-#         <div style="
-#             font-family: Arial, Helvetica, sans-serif;
-#             font-size: 16px;
-#             color: #13294B;
-#             margin-top: 6px;
-#         ">From Jupyter Notebook to a Reusable Python Script</div>
-#     </div>
-# </div>
-# 
-# 
-
-# In[1]:
-
 
 import pandas as pd
 import geopandas as gpd
@@ -51,17 +6,11 @@ from matplotlib.patches import Polygon, Ellipse
 from matplotlib.backends.backend_pdf import PdfPages 
 
 
-# In[2]:
-
-
-# getting the US census data
-
 url_0 = "https://www2.census.gov/geo/tiger/GENZ2024/shp/" # url for census tiger data 
 url_county = "cb_2024_us_county_500k.zip" # county level
 url_state = "cb_2024_us_state_500k.zip" # state level 
 
 
-## Code for county level data 
 
 counties = gpd.read_file(url_0+url_county)
 nc_counties = counties.loc[counties["STATEFP"] == "37"].to_crs(6543).copy()
@@ -69,10 +18,6 @@ nc_counties = counties.loc[counties["STATEFP"] == "37"].to_crs(6543).copy()
 nc_counties = nc_counties.sort_values("NAME").reset_index(drop=True)
 
 
-# In[3]:
-
-
-#let's make each into a function with county and ax being the parameter
 
 def county_map(county, ax):
     selected = nc_counties[nc_counties["NAME"] == county]
@@ -85,9 +30,6 @@ def locator_map(county, ax):
     nc_counties.plot(ax=ax, edgecolor="gray", facecolor="white")
     selected.plot(ax=ax, edgecolor="black", facecolor="#7b9b90")
     ax.set_axis_off()
-
-
-# In[4]:
 
 
 # Making a pie chart function
@@ -106,9 +48,6 @@ def county_pie(county, ax):
     )
 
     ax.set_title("Land and water")
-
-
-# In[5]:
 
 
 def county_info(county, ax):
@@ -160,9 +99,6 @@ def county_info(county, ax):
     ax.set_axis_off()
 
 
-# In[6]:
-
-
 #Let's make it a function
 
 def county_figure(county, pdf):
@@ -209,18 +145,12 @@ def county_figure(county, pdf):
     plt.close(fig)
 
 
-# In[7]:
-
-
 # This might take a few seconds and you need at least 40MB of free space in your computer
 with PdfPages("NC_Counties.pdf") as pdf:  #with #manages a resource and automatically cleans up when you finish using it.
     for county in nc_counties["NAME"]:
         county_figure(county, pdf)
 
 
-# In[ ]:
-
-
-get_ipython().run_line_magic('pip', 'install nbconvert')
+#get_ipython().run_line_magic('pip', 'install nbconvert')
 # python3 -m nbconvert --to script "GEOG592_JN_to_py.ipynb"
 
