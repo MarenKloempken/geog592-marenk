@@ -5,14 +5,9 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-
-
-
 url_0 = "https://www2.census.gov/geo/tiger/GENZ2024/shp/" # url for census tiger data 
 url_county = "cb_2024_us_county_500k.zip" # county level
 url_state = "cb_2024_us_state_500k.zip" # state level 
-
-
 
 counties = gpd.read_file(url_0+url_county)
 nc_counties = counties.loc[counties["STATEFP"] == "37"].to_crs(6543).copy()
@@ -22,12 +17,6 @@ nc_counties.plot(edgecolor="black", facecolor="white")
 landfills = gpd.read_file("Active_Permitted_Landfills.geojson")
 
 landfills = landfills.to_crs(nc_counties.crs)
-
-print(nc_counties.columns)
-
-print(nc_counties.crs)
-print(landfills.crs)
-
 
 landfills_by_county = gpd.sjoin(
     landfills,
@@ -45,12 +34,7 @@ nc_counties["landfill_count"] = (
     .astype(int)
 )
 
-print(nc_counties[["NAME", "landfill_count"]].head())
-
-
-
 def county_map(county, ax):
-
 
     selected = nc_counties[nc_counties["NAME"] == county]
 
@@ -90,8 +74,6 @@ def county_map(county, ax):
     )
 
     ax.set_axis_off()
-
-
 
 def county_figure(county, pdf):
 
