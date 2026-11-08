@@ -1,13 +1,36 @@
 print("Loading in Libraries")
 
-import pandas as pd
+#import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+import argparse
+
+parser = argparse.ArgumentParser(
+    description="A program that makes a North Carolina Landfill Atlas"
+)
+
+parser.add_argument(
+    "county",
+    help="The user will input the name of the county they want from the atlas and it will generate the atlas page for that county"
+)
+
+parser.add_argument(
+    "--color",
+    default="#40a582"
+)
+
+args = parser.parse_args()
+
+county = args.county
+face_color = args.color
+
 
 url_0 = "https://www2.census.gov/geo/tiger/GENZ2024/shp/" # url for census tiger data 
 url_county = "cb_2024_us_county_500k.zip" # county level
 url_state = "cb_2024_us_state_500k.zip" # state level 
+
+
 
 counties = gpd.read_file(url_0+url_county)
 nc_counties = counties.loc[counties["STATEFP"] == "37"].to_crs(6543).copy()
@@ -41,7 +64,7 @@ def county_map(county, ax):
     selected.plot(
         ax=ax,
         edgecolor="black",
-        facecolor="#7b9b90"
+        facecolor=face_color
     )
 
     county_landfills = landfills_by_county[
@@ -54,10 +77,7 @@ def county_map(county, ax):
         markersize=15
     )
 
-    ax.set_title(f"{county} County Landfills")
-    ax.set_axis_off()
-
-    def locator_map(county, ax):
+def locator_map(county, ax):
 
         selected = nc_counties[nc_counties["NAME"] == county]
 
@@ -70,10 +90,9 @@ def county_map(county, ax):
         selected.plot(
         ax=ax,
         edgecolor="black",
-        facecolor="#7b9b90"
+        facecolor=face_color
     )
 
-    ax.set_axis_off()
 
 def county_figure(county, pdf):
 
@@ -111,10 +130,10 @@ def county_figure(county, pdf):
     plt.close(fig)
 
 
-with PdfPages("nc_landfill_atlas.pdf") as pdf:
+with PdfPages(f"{county}_landfill_atlas.pdf") as pdf:
 
-    for county in nc_counties["NAME"]:
-        county_figure(county, pdf)
+    county_figure(county, pdf)
 
 print("Atlas created successfully!")
+
 

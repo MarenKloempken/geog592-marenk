@@ -1,9 +1,19 @@
 
-import pandas as pd
+#import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Ellipse
 from matplotlib.backends.backend_pdf import PdfPages 
+import argparse
+
+parser = argparse.ArgumentParser(
+        description = "A program that makes an Atlas"
+    )
+parser.add_argument("statefp", help="The STATEFP code: for example, North Carolina is STATEFP 37")
+parser.add_argument("--color", default = "#4aa799")
+args = parser.parse_args()
+statefp = args.statefp
+face_color = args.color
 
 
 url_0 = "https://www2.census.gov/geo/tiger/GENZ2024/shp/" # url for census tiger data 
@@ -13,28 +23,28 @@ url_state = "cb_2024_us_state_500k.zip" # state level
 
 
 counties = gpd.read_file(url_0+url_county)
-nc_counties = counties.loc[counties["STATEFP"] == "37"].to_crs(6543).copy()
-# nc_counties.plot(edgecolor="black", facecolor="white")
-nc_counties = nc_counties.sort_values("NAME").reset_index(drop=True)
+state_counties = counties.loc[counties["STATEFP"] == statefp].to_crs(6543).copy()
+# state_counties.plot(edgecolor="black", facecolor="white")
+state_counties = state_counties.sort_values("NAME").reset_index(drop=True)
 
 
 
 def county_map(county, ax):
-    selected = nc_counties[nc_counties["NAME"] == county]
-    selected.plot(ax=ax, edgecolor="black", facecolor="#7b9b90")
+    selected = state_counties[state_counties["NAME"] == county]
+    selected.plot(ax=ax, edgecolor="black", facecolor= face_color)
     ax.set_axis_off()
 
 
 def locator_map(county, ax):
-    selected = nc_counties[nc_counties["NAME"] == county]
-    nc_counties.plot(ax=ax, edgecolor="gray", facecolor="white")
-    selected.plot(ax=ax, edgecolor="black", facecolor="#7b9b90")
+    selected = state_counties[state_counties["NAME"] == county]
+    state_counties.plot(ax=ax, edgecolor="gray", facecolor="white")
+    selected.plot(ax=ax, edgecolor="black", facecolor = face_color)
     ax.set_axis_off()
 
 
 # Making a pie chart function
 def county_pie(county, ax):
-    selected = nc_counties[nc_counties["NAME"] == county]
+    selected = state_counties[state_counties["NAME"] == county]
 
     land = selected["ALAND"].iloc[0]
     water = selected["AWATER"].iloc[0]
@@ -51,7 +61,7 @@ def county_pie(county, ax):
 
 
 def county_info(county, ax):
-    selected = nc_counties[nc_counties["NAME"] == county]
+    selected = state_counties[state_counties["NAME"] == county]
 
     land = selected["ALAND"].iloc[0]
     water = selected["AWATER"].iloc[0]
@@ -146,8 +156,8 @@ def county_figure(county, pdf):
 
 
 # This might take a few seconds and you need at least 40MB of free space in your computer
-with PdfPages("NC_Counties.pdf") as pdf:  #with #manages a resource and automatically cleans up when you finish using it.
-    for county in nc_counties["NAME"]:
+with PdfPages("state_Counties.pdf") as pdf:  #with #manages a resource and automatically cleans up when you finish using it.
+    for county in state_counties["NAME"]:
         county_figure(county, pdf)
 
 
